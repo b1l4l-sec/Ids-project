@@ -1,0 +1,73 @@
+#include <tunables/global>
+
+# AppArmor profile for Flask Honeypot
+# Place in /etc/apparmor.d/usr.bin.honeypot-flask
+# Load with: sudo apparmor_parser -r /etc/apparmor.d/usr.bin.honeypot-flask
+
+/usr/bin/python3 flags=(complain) {
+  #include <abstractions/base>
+  #include <abstractions/python>
+  #include <abstractions/nameservice>
+
+  # Python interpreter and libraries
+  /usr/bin/python3* rix,
+  /usr/lib/python3*/** r,
+  /usr/local/lib/python3*/** r,
+
+  # Application code - adjust path to your installation
+  /opt/ids-honeypot-apparmor-elk/** r,
+  /opt/ids-honeypot-apparmor-elk/app/file.py r,
+  /opt/ids-honeypot-apparmor-elk/.venv/** r,
+
+  # Config files
+  /opt/ids-honeypot-apparmor-elk/config.yaml r,
+  /opt/ids-honeypot-apparmor-elk/config.example.yaml r,
+
+  # Templates and static files
+  /opt/ids-honeypot-apparmor-elk/app/templates/** r,
+  /opt/ids-honeypot-apparmor-elk/app/static/** r,
+
+  # GeoIP database (read-only)
+  /opt/ids-honeypot-apparmor-elk/ids/geoip/*.mmdb r,
+
+  # Logging (write access)
+  /var/log/honeypot_web/ rw,
+  /var/log/honeypot_web/** rw,
+
+  # Temporary files
+  /tmp/** rw,
+  /var/tmp/** rw,
+
+  # System files (minimal necessary access)
+  /etc/hosts r,
+  /etc/resolv.conf r,
+  /etc/nsswitch.conf r,
+  /etc/ssl/certs/ r,
+  /etc/ssl/certs/** r,
+  /usr/share/ca-certificates/** r,
+
+  # Proc filesystem (minimal)
+  @{PROC}/sys/kernel/random/uuid r,
+  @{PROC}/@{pid}/status r,
+  @{PROC}/@{pid}/fd/ r,
+
+  # Network access
+  network inet stream,
+  network inet6 stream,
+  network inet dgram,
+  network inet6 dgram,
+
+  # Capability for binding to port 8080 (non-privileged)
+  capability net_bind_service,
+
+  # Deny access to sensitive system files
+  deny /etc/shadow r,
+  deny /etc/passwd w,
+  deny /etc/group w,
+  deny /root/** rw,
+  deny /home/*/.ssh/** rw,
+
+  # Deny code execution in writable directories
+  deny /tmp/** x,
+  deny /var/tmp/** x,
+}

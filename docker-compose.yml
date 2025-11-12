@@ -1,0 +1,70 @@
+# Docker Compose Configuration (OPTIONAL)
+# This project integrates with EXISTING ELK 8.15 installation
+# Do NOT use this to install ELK - it is already installed on your system
+
+version: '3.8'
+
+services:
+  # Optional: Logstash container if you don't have it installed
+  # Uncomment if you want to run Logstash in a container
+  # logstash:
+  #   image: docker.elastic.co/logstash/logstash:8.15.0
+  #   container_name: honeypot-logstash
+  #   volumes:
+  #     - ./logstash/logstash_pipeline.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+  #   ports:
+  #     - "5000:5000"
+  #   environment:
+  #     - "LS_JAVA_OPTS=-Xmx512m -Xms512m"
+  #   networks:
+  #     - elk
+  #   depends_on:
+  #     - elasticsearch
+
+  # Flask Honeypot (optional container deployment)
+  honeypot:
+    build:
+      context: .
+      dockerfile: Dockerfile.honeypot
+    container_name: honeypot-web
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./app:/app
+      - ./config.yaml:/app/config.yaml:ro
+      - ./ids/geoip:/app/ids/geoip:ro
+      - /var/log/honeypot_web:/var/log/honeypot_web
+    environment:
+      - CONFIG_PATH=/app/config.yaml
+    restart: unless-stopped
+    networks:
+      - honeypot
+
+  # Scapy IDS (requires host network mode for packet capture)
+  # ids:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.ids
+  #   container_name: honeypot-ids
+  #   network_mode: host
+  #   volumes:
+  #     - ./ids:/ids
+  #     - ./config.yaml:/ids/config.yaml:ro
+  #     - /var/log/honeypot_web:/var/log/honeypot_web
+  #   cap_add:
+  #     - NET_RAW
+  #     - NET_ADMIN
+  #   restart: unless-stopped
+
+networks:
+  honeypot:
+    driver: bridge
+  # elk:
+  #   external: true  # Connect to existing ELK network if using Docker ELK
+
+# IMPORTANT NOTES:
+# 1. This docker-compose is OPTIONAL
+# 2. It does NOT install ELK 8.15 (you already have it)
+# 3. Preferred deployment: Run Python scripts directly on host
+# 4. Container deployment may have limitations with AppArmor and packet capture
+# 5. Adjust volume paths to match your installation directory

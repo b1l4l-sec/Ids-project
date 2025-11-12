@@ -1,0 +1,32 @@
+2025-11-11T10:15:30Z - ids - WARNING - ALERT [SQL_INJECTION] from 127.0.0.1 (score: 3) - SQL injection pattern detected: ('\s*OR\s*'1'\s*=\s*'1)
+2025-11-11T10:15:31Z - ids - WARNING - ALERT [PATH_TRAVERSAL] from 127.0.0.1 (score: 5) - Path traversal pattern detected: \.\./
+2025-11-11T10:15:32Z - ids - WARNING - ALERT [SUSPICIOUS_USER_AGENT] from 127.0.0.1 (score: 6) - Suspicious user agent: sqlmap
+2025-11-11T10:15:33Z - ids - WARNING - ALERT [SQL_INJECTION] from 127.0.0.1 (score: 9) - SQL injection pattern detected: (UNION.*SELECT)
+2025-11-11T10:15:34Z - ids - WARNING - ALERT [PORT_SCAN] from 127.0.0.1 (score: 19) - Scanned 10 ports in 5s
+2025-11-11T10:15:34Z - ids - CRITICAL - HIGH RISK ALERT from 127.0.0.1 - Score: 19
+2025-11-11T10:15:34Z - ids - INFO - Blocked IP: 127.0.0.1 - Reason: PORT_SCAN - Score: 19
+
+Sample HIGH_RISK alert JSON sent to Logstash:
+{
+  "timestamp": "2025-11-11T10:15:34Z",
+  "event_type": "ids_alert",
+  "event_id": "PORT_SCAN_127.0.0.1_1699699734",
+  "alert_type": "PORT_SCAN",
+  "source_ip": "127.0.0.1",
+  "destination_ip": "127.0.0.1",
+  "score": 19,
+  "severity": "HIGH_RISK",
+  "details": "Scanned 10 ports in 5s",
+  "payload_snippet": "Ports: [21, 22, 23, 25, 80, 443, 3306, 5432, 8080, 8443]",
+  "geoip": {
+    "city": "Private",
+    "country": "Private",
+    "country_code": "Private",
+    "latitude": null,
+    "longitude": null
+  },
+  "blocked": true
+}
+
+Note: In actual deployment with auto_block disabled or localhost testing,
+the IP would not be blocked to prevent self-blocking.

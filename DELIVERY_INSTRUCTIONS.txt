@@ -1,0 +1,99 @@
+================================================================================
+IDS HONEYPOT WITH APPARMOR AND ELK 8.15
+DELIVERY INSTRUCTIONS
+================================================================================
+
+Project: ids-honeypot-apparmor-elk
+Version: 1.0.0
+Date: 2025-11-11
+Delivered to: User with existing ELK 8.15 installation
+
+================================================================================
+WHAT'S INCLUDED
+================================================================================
+
+All files are in this directory (already extracted).
+
+Contents:
+✓ Flask honeypot (app/file.py) - exactly as requested
+✓ Scapy IDS (ids/scapy_ids.py) - full detection suite
+✓ GeoIP integration with download helper
+✓ Logstash pipeline for ELK 8.15
+✓ Kibana dashboard (NDJSON export + import script)
+✓ AppArmor confinement profiles
+✓ IP blocking scripts (iptables)
+✓ Limited attack simulator (safe, localhost default)
+✓ Email alerting (SMTP with TLS)
+✓ Configuration templates
+✓ Comprehensive documentation
+✓ Automated test suite
+✓ Verification artifacts
+
+================================================================================
+START HERE - COPY AND PASTE THESE COMMANDS
+================================================================================
+
+# 1. Install system dependencies
+sudo apt-get update
+sudo apt-get install -y python3 python3-pip python3-venv libpcap-dev tcpdump apparmor-utils iptables
+
+# 2. Setup Python environment
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# 3. Create log directory
+sudo mkdir -p /var/log/honeypot_web
+sudo chown $USER:$USER /var/log/honeypot_web
+
+# 4. Create configuration
+cp config.example.yaml config.yaml
+nano config.yaml  # Edit to set your ELK endpoints
+
+# 5. Download GeoIP database (follow instructions)
+bash ids/geoip/download_geoip.sh
+
+# 6. Start honeypot (Terminal 1)
+python3 app/file.py
+
+# 7. Start IDS (Terminal 2)
+sudo .venv/bin/python3 ids/scapy_ids.py
+
+# 8. Test it (Terminal 3)
+python3 scripts/attacker_simulator.py
+
+# 9. Check logs
+tail -f /var/log/honeypot_web/*.log
+
+# 10. Open Kibana
+# http://localhost:5601/app/dashboards
+
+================================================================================
+READ THESE DOCUMENTS
+================================================================================
+
+START HERE:
+→ QUICKSTART.md - Get running in 5 minutes
+→ README.md - Comprehensive guide
+
+ADVANCED:
+→ DEPLOYMENT.md - Production setup
+→ PROJECT_SUMMARY.txt - Complete overview
+→ apparmor/README-apparmor.md - AppArmor details
+
+VERIFICATION:
+→ tests/verify_run.sh - Run automated tests
+→ tests/verification_logs/ - See test results
+
+================================================================================
+CONTACT & SUPPORT
+================================================================================
+
+Email: lbienbilal@gmail.com
+
+For support, include:
+- Output of: bash tests/verify_run.sh
+- Logs from: /var/log/honeypot_web/
+- Error messages
+
+================================================================================

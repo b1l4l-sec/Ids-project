@@ -1,0 +1,49 @@
+IDS HONEYPOT APPARMOR ELK - FILE MANIFEST
+==========================================
+
+Core Components:
+[X] app/file.py - Flask honeypot (MUST be named file.py)
+[X] ids/scapy_ids.py - Scapy IDS with detection rules
+[X] ids/geoip/download_geoip.sh - GeoIP database helper
+
+Configuration:
+[X] config.example.yaml - Configuration template
+[X] requirements.txt - Python dependencies
+
+ELK Integration:
+[X] logstash/logstash_pipeline.conf - Logstash pipeline
+[X] kibana/dashboard_kibana.ndjson - Kibana dashboard export
+[X] kibana/import_dashboard.sh - Dashboard import script
+
+Security:
+[X] apparmor/profiles/usr.bin.honeypot-flask - AppArmor profile
+[X] apparmor/profiles/usr.bin.scapy-ids - AppArmor profile
+[X] apparmor/README-apparmor.md - AppArmor guide
+
+Automation:
+[X] scripts/block_ip.sh - IP blocking via iptables
+[X] scripts/unblock_ip.sh - IP unblocking
+[X] scripts/attacker_simulator.py - Limited attack simulator
+
+Testing:
+[X] tests/verify_run.sh - Automated verification
+[X] tests/verification_logs/verification_summary.txt
+[X] tests/verification_logs/code_validation.txt
+[X] tests/verification_logs/sample_honeypot_log.txt
+[X] tests/verification_logs/sample_ids_alerts.txt
+[X] tests/verification_logs/sample_blocked_ips.txt
+
+Documentation:
+[X] README.md - Comprehensive setup guide (750+ lines)
+[X] QUICKSTART.md - 5-minute quick start
+[X] DEPLOYMENT.md - Production deployment guide
+[X] PROJECT_SUMMARY.txt - Complete project overview
+[X] DELIVERY_INSTRUCTIONS.txt - This delivery
+[X] LICENSE - MIT + security disclaimer
+
+Optional:
+[X] docker-compose.yml - Optional containerization
+
+All 14 requirements met.
+All files present and validated.
+Ready for deployment.

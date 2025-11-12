@@ -1,0 +1,101 @@
+#include <tunables/global>
+
+# AppArmor profile for Scapy IDS
+# Place in /etc/apparmor.d/usr.bin.scapy-ids
+# Load with: sudo apparmor_parser -r /etc/apparmor.d/usr.bin.scapy-ids
+# Note: Scapy requires CAP_NET_RAW and CAP_NET_ADMIN for packet sniffing
+
+/usr/bin/python3 flags=(complain) {
+  #include <abstractions/base>
+  #include <abstractions/python>
+  #include <abstractions/nameservice>
+
+  # Python interpreter and libraries
+  /usr/bin/python3* rix,
+  /usr/lib/python3*/** r,
+  /usr/local/lib/python3*/** r,
+
+  # Application code
+  /opt/ids-honeypot-apparmor-elk/** r,
+  /opt/ids-honeypot-apparmor-elk/ids/scapy_ids.py r,
+  /opt/ids-honeypot-apparmor-elk/.venv/** r,
+
+  # Config files
+  /opt/ids-honeypot-apparmor-elk/config.yaml r,
+  /opt/ids-honeypot-apparmor-elk/config.example.yaml r,
+
+  # GeoIP database
+  /opt/ids-honeypot-apparmor-elk/ids/geoip/*.mmdb r,
+
+  # Logging (write access)
+  /var/log/honeypot_web/ rw,
+  /var/log/honeypot_web/** rw,
+
+  # Scripts for IP blocking
+  /opt/ids-honeypot-apparmor-elk/scripts/block_ip.sh rx,
+  /opt/ids-honeypot-apparmor-elk/scripts/unblock_ip.sh rx,
+  /bin/bash rix,
+  /usr/bin/bash rix,
+
+  # Required for iptables blocking
+  /sbin/iptables rix,
+  /usr/sbin/iptables rix,
+
+  # Temporary files
+  /tmp/** rw,
+  /var/tmp/** rw,
+
+  # System files
+  /etc/hosts r,
+  /etc/resolv.conf r,
+  /etc/nsswitch.conf r,
+  /etc/ssl/certs/ r,
+  /etc/ssl/certs/** r,
+  /usr/share/ca-certificates/** r,
+
+  # Proc filesystem
+  @{PROC}/sys/kernel/random/uuid r,
+  @{PROC}/@{pid}/status r,
+  @{PROC}/@{pid}/fd/ r,
+  @{PROC}/sys/net/** r,
+
+  # Sys filesystem (for network interfaces)
+  /sys/class/net/ r,
+  /sys/class/net/** r,
+  /sys/devices/** r,
+
+  # Network interfaces and packet capture
+  /dev/net/tun rw,
+  /dev/bpf* rw,
+
+  # Network access (all types for packet capture)
+  network inet raw,
+  network inet6 raw,
+  network inet stream,
+  network inet6 stream,
+  network inet dgram,
+  network inet6 dgram,
+  network packet raw,
+  network packet dgram,
+
+  # Capabilities for packet capture and firewall manipulation
+  capability net_raw,
+  capability net_admin,
+  capability dac_override,
+  capability dac_read_search,
+  capability sys_module,
+
+  # Netlink for network monitoring
+  network netlink raw,
+
+  # Deny access to sensitive files
+  deny /etc/shadow r,
+  deny /etc/passwd w,
+  deny /etc/group w,
+  deny /root/.ssh/** rw,
+  deny /home/*/.ssh/** rw,
+
+  # Deny code execution in writable directories
+  deny /tmp/** x,
+  deny /var/tmp/** x,
+}

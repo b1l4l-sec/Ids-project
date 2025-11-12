@@ -1,0 +1,56 @@
+# Honeypot IDS Configuration
+# Copy to config.yaml and adjust for your environment
+
+# Flask Honeypot Configuration
+honeypot:
+  port: 8080
+  host: "0.0.0.0"
+  log_file: "/var/log/honeypot_web/honeypot.log"
+  max_payload_snippet: 500  # Maximum bytes to log from POST data
+
+# Scapy IDS Configuration
+ids:
+  interface: "any"  # Network interface to monitor (e.g., "eth0", "wlan0", or "any")
+  log_file: "/var/log/honeypot_web/ids_alerts.log"
+  threshold: 10  # Alert score threshold for HIGH_RISK classification
+  auto_block: true  # Automatically block IPs reaching threshold
+  max_blocks_per_hour: 5  # Rate limit for auto-blocking
+  scan_window_seconds: 60  # Time window for port scan detection
+  scan_port_threshold: 10  # Number of ports triggering scan alert
+
+# GeoIP Configuration
+geoip:
+  database_path: "ids/geoip/GeoLite2-City.mmdb"
+
+# ELK Integration (Elasticsearch 8.15)
+elk:
+  host: "localhost"
+  port: 9200
+  username: ""  # Set if authentication enabled
+  password: ""  # Set if authentication enabled
+  use_https: false
+  verify_ssl: false
+  index_prefix: "honeypot"
+
+# Logstash Configuration
+logstash:
+  host: "localhost"
+  port: 5000
+  protocol: "tcp"  # tcp or udp
+
+# Kibana Configuration
+kibana:
+  host: "localhost"
+  port: 5601
+  username: ""  # Set if authentication enabled
+  password: ""  # Set if authentication enabled
+
+# Email Alerting (Optional)
+email:
+  enabled: false  # Set to true to enable email alerts
+  smtp_host: "${SMTP_HOST}"  # Or hardcode, e.g., "smtp.gmail.com"
+  smtp_port: 587
+  smtp_user: "${SMTP_USER}"
+  smtp_password: "${SMTP_PASS}"
+  alert_to: "${ALERT_EMAIL}"  # Default: lbienbilal@gmail.com
+  alert_on_high_risk: true  # Send email for HIGH_RISK alerts only

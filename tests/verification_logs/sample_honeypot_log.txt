@@ -1,0 +1,23 @@
+2025-11-11T10:15:23Z - honeypot - INFO - Request from 127.0.0.1 - GET / - Status: 200
+2025-11-11T10:15:24Z - honeypot - INFO - Request from 127.0.0.1 - POST /login - Status: 200
+2025-11-11T10:15:25Z - honeypot - INFO - Request from 127.0.0.1 - POST /login - Status: 200
+2025-11-11T10:15:26Z - honeypot - INFO - Request from 127.0.0.1 - GET /../../../../etc/passwd - Status: 404
+2025-11-11T10:15:27Z - honeypot - INFO - Request from 127.0.0.1 - GET /%2e%2e%2f%2e%2e%2fetc%2fpasswd - Status: 404
+
+Sample JSON event sent to Logstash:
+{
+  "timestamp": "2025-11-11T10:15:24Z",
+  "event_type": "honeypot_access",
+  "source_ip": "127.0.0.1",
+  "method": "POST",
+  "path": "/login",
+  "user_agent": "sqlmap/1.0",
+  "post_data_snippet": "{'username': \"admin' OR '1'='1\", 'password': 'test123'}",
+  "response_status": 200,
+  "geoip": {
+    "city": "Private",
+    "country": "Private",
+    "latitude": null,
+    "longitude": null
+  }
+}

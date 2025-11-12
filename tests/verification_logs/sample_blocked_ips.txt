@@ -1,0 +1,13 @@
+2025-11-11T10:20:15Z | BLOCKED | 203.0.113.1 | Verification test
+2025-11-11T10:20:20Z | UNBLOCKED | 203.0.113.1 | Manual unblock
+2025-11-11T10:25:45Z | BLOCKED | 198.51.100.42 | PORT_SCAN - Score: 15
+2025-11-11T10:28:33Z | BLOCKED | 192.0.2.88 | SQL_INJECTION - Score: 12
+
+Sample iptables rules after blocking:
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination
+DROP       all  --  192.0.2.88           0.0.0.0/0
+DROP       all  --  198.51.100.42        0.0.0.0/0
+DROP       all  --  203.0.113.1          0.0.0.0/0
+
+Note: TEST-NET addresses used for testing (not real malicious IPs)
