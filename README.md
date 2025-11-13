@@ -633,3 +633,24 @@ Developed for defensive security research and education.
 **Version**: 1.2.1
 
 **Last Updated**: 2025-11-11
+
+don't forget to use this template to load the attacker location : 
+PUT _index_template/honeypot_template
+{
+  "index_patterns": ["honeypot-*"],
+  "template": {
+    "mappings": {
+      "properties": {
+        "source": {
+          "properties": {
+            "geo": {
+              "properties": {
+                "location": { "type": "geo_point" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
